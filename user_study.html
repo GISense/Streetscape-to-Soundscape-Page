@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos.">
+  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Soundscape2landscape: Translating Sounding Environment to Landscape using XXX</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/GISenseLabLogoPNG.png">
+  <link rel="stylesheet" href="static/css/user_study/q1.css">
+  <link rel="stylesheet" href="static/css/user_study/q2.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="config/use_study_src.js"></script>
+</head>
+<body>
+<section class="section" id="user-study-question2">
+  <div class="q2-question-background">
+    <div class="container">
+      <h2 class="title is-3">
+        <span class="q2-gradient-text">Q1: Select the image that you believe are most closely related to the audio clip.</span>
+      </h2>
+      <!-- 内层统一背景容器 -->
+      <div id="q2-pairs-container"></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="user-study-question1">
+  <div class="question-background">
+    <div class="container">
+      <h2 class="title is-3";>
+        <span class="q1-gradient-text">Q2: Choose the one generated landscape that best matches the ground truth.</span>
+
+      </h2>
+        <!-- 提交按钮，风格参考给定样例 -->
+      <!-- 下面通过 JavaScript 循环生成子问题 2 到 15 -->
+      <div id="q1-pairs-container"></div>
+    </div>
+  </div>
+  </div>
+</section>
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // 用于保存每个问题的选中图片ID，key 为问题编号（1-15）
+    const selections = {};
+
+    const container = document.getElementById("q1-pairs-container");
+
+    // 循环生成子问题 1 到 15
+    for (let i = 1; i <= 15; i++) {
+      // 初始化该问题的选中项为空
+      selections[i] = null;
+
+      // 创建一个 pair-wrapper
+      const wrapper = document.createElement("div");
+      wrapper.className = "pair-wrapper";
+
+      wrapper.innerHTML = `
+        <div class="big-block-label">${i}</div>
+        <div style="text-align: center; font-size: 25px;margin-bottom: 40px;">
+          Select <span style="color: red;">one</span> generated landscape that best matches the ground truth.
+        </div>
+
+        <div class="pair">
+
+
+          <div class="left-section">
+            <h3 class="subtitle" style="text-align: center;">Ground Truth</h3>
+            <div class="images">
+              <div class="image-label">
+                <img data-question="${i}" id="q_1_sub${i}_ground_truth_1" alt="Ground Truth Image A" class="square-image non-selectable-image">
+              </div>
+              <div class="image-label">
+                <img data-question="${i}" id="q_1_sub${i}_ground_truth_2" alt="Ground Truth Image B" class="square-image non-selectable-image">
+              </div>
+            </div>
+          </div>
+
+
+          <div class="right-section">
+            <h3 class="subtitle" style="text-align: center;">Generated Landscape</h3>
+
+            <div class="images">
+              <div class="image-label">
+                <span class="label">A</span>
+                <img data-question="${i}" id="q_1_sub${i}_generated_A" alt="Generated Landscape Image A" class="square-image selectable-image">
+              </div>
+              <div class="image-label">
+                <span class="label">B</span>
+                <img data-question="${i}" id="q_1_sub${i}_generated_B" alt="Generated Landscape Image B" class="square-image selectable-image">
+              </div>
+              <div class="image-label">
+                <span class="label">C</span>
+                <img data-question="${i}" id="q_1_sub${i}_generated_C" alt="Generated Landscape Image C" class="square-image selectable-image">
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(wrapper);
+    }
+
+    // 为所有生成图片添加点击事件
+    document.querySelectorAll('.selectable-image').forEach(img => {
+      img.addEventListener('click', () => {
+        const questionNumber = img.getAttribute('data-question');
+
+        // 如果当前图片已选中，则取消选中
+        if (selections[questionNumber] === img.id) {
+          img.classList.remove('selected');
+          selections[questionNumber] = null;
+        } else {
+          // 同一问题下取消其他生成图片的选中状态
+          document.querySelectorAll(`img[data-question="${questionNumber}"].selectable-image`).forEach(otherImg => {
+            otherImg.classList.remove('selected');
+          });
+          // 选中当前图片
+          img.classList.add('selected');
+          selections[questionNumber] = img.id;
+        }
+
+        // 此处可利用 selections 与后端进行数据交互
+        console.log("当前选择：", selections);
+      });
+    });
+
+    // 根据 Q1_CONFIG 为每个子问题的图片赋值（假设 Q1_CONFIG 已定义）
+    for (let i = 1; i <= 15; i++) {
+      document.getElementById("q_1_sub" + i + "_ground_truth_1").src =
+        Q1_CONFIG["sub_" + i].groundTruth.A;
+      document.getElementById("q_1_sub" + i + "_ground_truth_2").src =
+        Q1_CONFIG["sub_" + i].groundTruth.B;
+      document.getElementById("q_1_sub" + i + "_generated_A").src =
+        Q1_CONFIG["sub_" + i].generatedLandscape.A;
+      document.getElementById("q_1_sub" + i + "_generated_B").src =
+        Q1_CONFIG["sub_" + i].generatedLandscape.B;
+      document.getElementById("q_1_sub" + i + "_generated_C").src =
+        Q1_CONFIG["sub_" + i].generatedLandscape.C;
+    }
+
+    // 添加整个 Q1 区域的提交按钮（仅一个），放在所有题目后面
+    const submitButton = document.createElement("button");
+    submitButton.textContent = "Submit";
+    submitButton.className = "external-link button is-normal is-rounded";
+    submitButton.classList.add("q1-custom-button");
+
+    submitButton.addEventListener("click", () => {
+      // 检查每个题目是否已经选择了一个选项
+      for (let i = 1; i <= 15; i++) {
+        if (!selections[i]) {
+          alert(`You have not answered question ${i}. Please answer all questions before submitting.`);
+          return; // 若有题目未作答，则停止提交
+        }
+      }
+
+      // 构造提交数据，每个对象包含：Q1, 题号, 选项（从图片ID中提取，如 "A", "B", "C"）
+      const submissionData = [];
+      for (let i = 1; i <= 15; i++) {
+        // 图片ID格式示例： "q_1_sub3_generated_B"
+        const parts = selections[i].split("_");
+        const option = parts[parts.length - 1]; // 获取最后一部分，即选项字母
+        submissionData.push({
+          q: "Q2",
+          questionNumber: i,
+          option: option
+        });
+      }
+      console.log("Submission Data:", submissionData);
+       // 通过 fetch 将数据提交到本地 8080 端口的后端接口
+
+
+    fetch("https://dit-proxy-wang-junbos-projects.vercel.app/api/q2", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(submissionData)
+      })
+      //如果状态值为 200，表示成功
+      .then(response => {
+        if (response.ok) {
+          alert("Submission successful! Data has been sent to our server.");
+        } else {
+          alert("Submission failed. Please try again later and contact us.");
+        }
+      })
+
+    });
+    const submitContainer = document.createElement("div");
+    submitContainer.style.textAlign = "center"; // 居中按钮
+    submitContainer.style.margin = "40px 0";    // 加点上下间距
+    submitContainer.appendChild(submitButton);
+    submitButton.style.width = "100%";      // 撑满父容器
+    submitContainer.style.margin = "40px auto";
+    submitButton.style.borderRadius = "12px";
+    submitButton.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
+    submitButton.classList.add("q2-custom-button");
+    container.appendChild(submitContainer);
+  });
+</script>
+
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("q2-pairs-container");
+
+  // 用于保存每个 Q2 问题中选中的图片ID，允许最多2个（key 为题号 1~15）
+  const selectionsQ2 = {};
+  for (let i = 1; i <= 15; i++) {
+    selectionsQ2[i] = [];
+  }
+
+  // 循环生成 sub_1 到 sub_15 的子问题
+  for (let i = 1; i <= 15; i++) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "q2-pair-wrapper";
+    // 每个题目包含音频和5个图片选项，所有图片均使用 q2-square-image 与 q2-selectable-image 类，并添加 data-question 属性
+    wrapper.innerHTML = `
+      <div class="q2-big-block-label">${i}</div>
+      <div class="q2-content-block">
+        <div style="text-align: center; font-size: 20px;margin-bottom: 16px;">
+          Select the image that you believe are most closely related to the audio.
+        </div>
+        <audio controls style="display: block; margin: 0 auto 20px auto;">
+          <source id="q2_sub${i}_audio" type="audio/mp3">
+          Your browser does not support the audio element.
+        </audio>
+        <div class="q2-images">
+          <div class="q2-image-label">
+            <span class="label">A</span>
+            <img data-question="${i}" id="q2_sub${i}_img_A" alt="Image A" class="q2-square-image q2-selectable-image">
+          </div>
+          <div class="q2-image-label">
+            <span class="label">B</span>
+            <img data-question="${i}" id="q2_sub${i}_img_B" alt="Image B" class="q2-square-image q2-selectable-image">
+          </div>
+          <div class="q2-image-label">
+            <span class="label">C</span>
+            <img data-question="${i}" id="q2_sub${i}_img_C" alt="Image C" class="q2-square-image q2-selectable-image">
+          </div>
+          <div class="q2-image-label">
+            <span class="label">D</span>
+            <img data-question="${i}" id="q2_sub${i}_img_D" alt="Image D" class="q2-square-image q2-selectable-image">
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(wrapper);
+  }
+
+  // 为所有 Q2 图片添加点击事件，允许每个题目最多选择两个图片，
+  // 当已选中2个时，自动取消最早选择的那个
+document.querySelectorAll("#q2-pairs-container .q2-selectable-image").forEach(img => {
+  img.addEventListener("click", () => {
+    const questionNumber = img.getAttribute("data-question");
+
+    // 初始化当前问题的选中状态数组
+    if (!selectionsQ2[questionNumber]) {
+      selectionsQ2[questionNumber] = [];
+    }
+    const currentSelections = selectionsQ2[questionNumber];
+
+    // 如果当前图片已选中，则取消选中
+    if (img.classList.contains("selected")) {
+      img.classList.remove("selected");
+      const idx = currentSelections.indexOf(img.id);
+      if (idx !== -1) {
+        currentSelections.splice(idx, 1);
+      }
+    } else {
+      // 清除当前问题下所有已选中的图片
+      currentSelections.forEach(id => {
+        const elem = document.getElementById(id);
+        if (elem) elem.classList.remove("selected");
+      });
+      currentSelections.length = 0; // 清空数组
+
+      // 选中当前图片
+      img.classList.add("selected");
+      currentSelections.push(img.id);
+    }
+  });
+});
+
+
+  // 根据 Q2_CONFIG 为每个子问题赋值（假设 Q2_CONFIG 已定义，键名为 "sub_1", "sub_2", …, "sub_15"）
+  for (let i = 1; i <= 15; i++) {
+    const subConfig = Q2_CONFIG["sub_" + i];
+    if (subConfig) {
+      // 设置音频（通过 source 元素）
+      const audioSource = document.getElementById("q2_sub" + i + "_audio");
+      if (audioSource && subConfig.audio) {
+        audioSource.src = subConfig.audio;
+      }
+      // 设置图片（A、B、C、D、E）
+      const keys = ["A", "B", "C", "D", "E"];
+      keys.forEach(key => {
+        const imgElement = document.getElementById("q2_sub" + i + "_img_" + key);
+        if (imgElement && subConfig.images[key]) {
+          imgElement.src = subConfig.images[key];
+        }
+      });
+    }
+  }
+
+  // 添加整个 Q2 区域的提交按钮（仅一个），放在所有题目后面
+  const submitButton = document.createElement("button");
+  submitButton.textContent = "Submit";
+  submitButton.className = "external-link button is-normal is-rounded";
+  submitButton.classList.add("q2-custom-button");
+
+  submitButton.addEventListener("click", () => {
+    // 检查每个题目是否恰好选择了两个选项
+    for (let i = 1; i <= 15; i++) {
+      if (selectionsQ2[i].length !== 1) {
+        alert(`Please make sure to select one option for question ${i} before submitting.`);
+        return; // 若有未满足条件的题目，则停止提交
+      }
+    }
+
+    // 构造提交数据，每个对象包含：Q2, 题号, 选项（从图片ID中提取，如 "A", "B" 等）
+    const submissionData = [];
+    for (let i = 1; i <= 15; i++) {
+      const selectedOptions = selectionsQ2[i].map(id => {
+        // 图片ID格式： "q2_sub{i}_img_{option}"
+        const parts = id.split("_");
+        return parts[parts.length - 1]; // 获取最后一个部分，即选项字母
+      });
+      submissionData.push({
+        q: "Q1",
+        questionNumber: i,
+        options: selectedOptions
+      });
+    }
+    console.log("Submission Data:", submissionData);
+
+    fetch("https://dit-proxy-wang-junbos-projects.vercel.app/api/q1", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(submissionData)
+      })
+      //如果状态值为 200，表示成功
+      .then(response => {
+        if (response.ok) {
+          alert("Submission successful! Data has been sent to our server.");
+        } else {
+          alert("Submission failed. Please try again later and contact us.");
+        }
+      })
+
+    });
+
+    const submitContainer = document.createElement("div");
+    submitContainer.style.textAlign = "center"; // 居中按钮
+    submitContainer.style.margin = "40px 0";    // 加点上下间距
+    submitContainer.appendChild(submitButton);
+    submitButton.style.width = "100%";      // 撑满父容器
+    submitContainer.style.margin = "40px auto";
+    submitButton.style.borderRadius = "12px";
+    submitButton.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
+    submitButton.classList.add("q2-custom-button");
+    container.appendChild(submitContainer);
+  });
+</script>
+
+
+
+
+<script>
+function openNewPageQ1() {
+  // 打开新的页面或执行其他操作
+  event.preventDefault();
+  window.open('https://docs.google.com/forms/d/e/1FAIpQLSf3OGEEBJpATcF8wSabpjoRxwv5NOplseacxaA3QmyUU37-mA/viewform?usp=header', '_blank', 'width=600,height=400');
+}
+
+function openNewPageQ2() {
+  // 打开新的页面或执行其他操作
+  event.preventDefault();
+  window.open('https://docs.google.com/forms/d/e/1FAIpQLScdutwHNcMSyMFpB5jFvCZmnemePvMUojtqwRKpB9-MHtDghQ/viewform?usp=header', '_blank', 'width=600,height=400');
+}
+
+</script>
+
+
+
+
+</body>
+</html>

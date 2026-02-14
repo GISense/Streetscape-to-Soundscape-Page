@@ -1,0 +1,156 @@
+:root {
+  /* 默认颜色，可通过 HTML 内联样式覆盖 */
+  --q2-color-question-background: #dbe1e8;
+  --q2-color-pair-wrapper: transparent;
+  --q2-color-block-label: rgba(0, 0, 0, 0.7);
+  --q2-color-image-label: rgba(0, 0, 0, 0.6);
+}
+
+.q2-question-background {
+  background-color: var(--q2-color-question-background);
+  padding: 30px 20px;
+}
+
+.q2-pair-wrapper {
+  background-color: var(--q2-color-pair-wrapper);
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.q2-big-block-label {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: var(--q2-color-block-label);
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 16px;
+  border-radius: 3px;
+  z-index: 1000;
+}
+
+.q2-content-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.q2-images {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly; /* 均匀分布 */
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+
+
+.q2-image-label {
+  position: relative;
+  display: inline-block;
+}
+
+.q2-image-label .label {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: var(--q2-color-image-label);
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 14px;
+  border-radius: 3px;
+}
+
+.q2-square-image {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+}
+.q2-square-image:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+/* Q2 图片默认使用渐变边框 */
+.q2-selectable-image {
+  border: 3px solid;
+  border-image: linear-gradient(120deg,
+    #FFE0BD 0%,   /* 浅肤色，原 #F5992E 的柔和版 */
+    #FFC6A0 20%,  /* 浅橙粉，原 #F17A21 的柔和版 */
+    #FFB08C 40%,  /* 柔粉橙，原 #E45A13 的浅色 */
+    #EFA07C 60%,  /* 柔暖橙，原 #BB5810 的浅色 */
+    #FFB08C 80%,  /* 同上 */
+    #FFC6A0 100%  /* 同上 */
+  ) 1;
+  transition: border 0.3s ease;
+  cursor: pointer;
+  background-color: transparent;
+}
+.q2-selectable-image:hover {
+  border-image: linear-gradient(120deg,
+    #C85C0C 0%,   /* 深焦糖橙 */
+    #B5480A 20%,  /* 焦糖红 */
+    #993B08 40%,  /* 深红橙 */
+    #7F2F06 60%,  /* 焦褐红 */
+    #993B08 80%,  /* 回到深橙红 */
+    #B5480A 100%  /* 柔和回暖 */
+  ) 1;
+}
+/* Q2 图片选中后变为纯绿色边框 */
+.q2-selectable-image.selected {
+  border: 8px solid;
+  border-image: none;
+  border-color: green;
+}
+.q2-square-image.selected,
+.q2-selectable-image.selected {
+  transform: translateY(-18px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.q2-submit-container {
+  text-align: right;
+  margin-top: 20px;
+}
+.q2-gradient-text {
+    font-size: 30px;
+    font-weight: bold;
+    background: linear-gradient(120deg, #F5992E 0%, #F17A21 20%, #E45A13 40%, #BB5810 60%, #E45A13 80%, #F17A21 100%);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientFlow 6s linear infinite;
+    text-align: center;      /* 水平居中文本 */
+    display: block;          /* 让 text-align 生效（确保不是 inline） */
+    margin: 0 auto;          /* 可选，用于块级元素水平居中 */
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% center;
+    }
+    100% {
+        background-position: -300% center;
+    }
+}
+
+.q2-custom-button {
+  background-color: #FFB08C;         /* 浅橙色背景 */
+  color: #000033; /* 更深的蓝黑色文字 */
+
+  border: none;                      /* 去边框 */
+  padding: 12px 24px;                /* 内边距 */
+  font-size: 25px;                   /* 字体大小 */
+  cursor: pointer;                   /* 鼠标悬停效果 */
+  transition: background-color 0.3s ease;
+}
+
+.q2-custom-button:hover {
+  background-color: #000011;         /* 悬停时颜色更深一点 */
+  transform: translateY(-4px);       /* 悬停上浮 */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);  /* 添加阴影 */
+}
+
+

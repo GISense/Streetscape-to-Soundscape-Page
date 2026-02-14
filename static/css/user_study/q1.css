@@ -1,0 +1,175 @@
+:root {
+  /* 默认颜色，可通过 HTML 内联样式覆盖 */
+  --color-question-background: #dbe1e8;
+  --color-pair-wrapper: transparent;
+  --color-left-section: transparent;
+  --color-right-section: transparent;
+  --color-block-label: rgba(0, 0, 0, 0.7);
+  --color-image-label: rgba(0, 0, 0, 0.6);
+}
+
+.question-background {
+  background-color: var(--color-question-background);
+  padding: 30px 20px;
+}
+
+.pair-wrapper {
+  background-color: var(--color-pair-wrapper);
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.big-block-label {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: var(--color-block-label);
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 16px;
+  border-radius: 3px;
+  z-index: 1000; /* 确保标号显示在最上层 */
+}
+
+.pair {
+  display: flex;
+  gap: 20px;
+}
+
+.left-section,
+.right-section {
+  flex: 1;
+  padding: 10px;
+  position: relative;
+}
+
+.left-section {
+  background-color: var(--color-left-section);
+}
+
+.right-section {
+  background-color: var(--color-right-section);
+}
+
+.images {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.image-label {
+  position: relative;
+  display: inline-block;
+}
+
+.image-label .label {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: var(--color-image-label);
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 14px;
+  border-radius: 3px;
+}
+
+.square-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* 默认 hover 状态下浮起 */
+.square-image:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 生成图片默认使用渐变边框 */
+.selectable-image {
+  border: 3px solid;
+  border-image: linear-gradient(120deg,
+    #FFE0BD 0%,
+    #FFC6A0 20%,
+    #FFB08C 40%,
+    #EFA07C 60%,
+    #FFB08C 80%,
+    #FFC6A0 100%
+  ) 1;
+  transition: border 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.selectable-image:hover {
+  border-image: linear-gradient(120deg,
+    #C85C0C 0%,   /* 深焦糖橙 */
+    #B5480A 20%,  /* 焦糖红 */
+    #993B08 40%,  /* 深红橙 */
+    #7F2F06 60%,  /* 焦褐红 */
+    #993B08 80%,  /* 回到深橙红 */
+    #B5480A 100%  /* 柔和回暖 */
+  ) 1;
+}
+
+/* 点击后变为纯绿色边框 */
+.selectable-image.selected {
+  border: 8px solid;
+  border-image: none;
+  border-color: green;
+}
+
+/* 选中的图片始终保持浮起状态 */
+.square-image.selected,
+.selectable-image.selected {
+  transform: translateY(-18px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Ground Truth 图片不显示边框 */
+.non-selectable-image {
+  border: none;
+}
+.q1-gradient-text {
+    font-size: 35px;
+    font-weight: bold;
+    background: linear-gradient(120deg, #F5992E 0%, #F17A21 20%, #E45A13 40%, #BB5810 60%, #E45A13 80%, #F17A21 100%);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientFlow 6s linear infinite;
+     text-align: center;      /* 水平居中文本 */
+      display: block;          /* 让 text-align 生效（确保不是 inline） */
+      margin: 0 auto;          /* 可选，用于块级元素水平居中 */
+}
+
+@keyframes gradientFlow {
+    0% {
+        background-position: 0% center;
+    }
+    100% {
+        background-position: -300% center;
+    }
+}
+.q1-custom-button {
+  background-color: #FFB08C;         /* 浅橙色背景 */
+  color: #000033; /* 更深的蓝黑色文字 */
+  border: none;                      /* 去边框 */
+  padding: 12px 24px;                /* 内边距 */
+  font-size: 25px;                   /* 字体大小 */
+  cursor: pointer;                   /* 鼠标悬停效果 */
+  transition: background-color 0.3s ease;
+}
+
+.q1-custom-button:hover {
+    background-color: #000011;         /* 悬停时颜色更深一点 */
+    transform: translateY(-4px);       /* 悬停上浮 */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);  /* 添加阴影 */
+}
