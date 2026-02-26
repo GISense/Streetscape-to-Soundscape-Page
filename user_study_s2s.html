@@ -122,91 +122,48 @@
       }
     }
 
+    // Submit answers to server
     const submissionData = [];
     for (let i = 1; i <= TOTAL; i++) {
-      submissionData.push({ q: "S2S", trialNumber: i, option: selections[i] });
+      const cfg = S2S_CONFIG["sub_" + i];
+      const sceneId = cfg.image.split("/").pop().replace(/\.[^.]+$/, "");
+      submissionData.push({ trial: i, scene_id: sceneId, selected_option: selections[i] });
     }
-    console.log("S2S Submission:", submissionData);
 
-    // Score calculation
-    const answers = {};
-    for (let i = 1; i <= TOTAL; i++) answers[i] = S2S_CONFIG["sub_" + i].answer;
-    let correct = 0;
-    for (let i = 1; i <= TOTAL; i++) { if (selections[i] === answers[i]) correct++; }
+    fetch("/api/s2s", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(submissionData)
+    }).catch(() => console.error("Failed to submit responses"));
 
-    const pct   = Math.round((correct / TOTAL) * 100);
-    const emoji = correct <= 3 ? "🎧" : correct <= 6 ? "👍" : correct <= 8 ? "🌟" : "🏆";
-    const msg   = correct <= 3 ? "Keep listening! Every soundscape is unique."
-                : correct <= 6 ? "Good ear! You matched several scenes correctly."
-                : correct <= 8 ? "Great job! You have a strong sense of soundscape."
-                : "Perfect! You're a soundscape expert!";
-
-    const scoreCard = document.createElement("div");
-    scoreCard.style.cssText = "background:linear-gradient(135deg,#1a3a5c,#2d6a9f);color:#fff;border-radius:20px;padding:40px 32px;text-align:center;margin-top:40px;box-shadow:0 8px 32px rgba(0,0,0,.2)";
-    scoreCard.innerHTML = `
-      <div style="font-size:56px;margin-bottom:12px">${emoji}</div>
-      <div style="font-size:2rem;font-weight:800;margin-bottom:8px">${correct} / ${TOTAL} Correct</div>
-      <div style="font-size:1.1rem;opacity:.85;margin-bottom:24px">${msg}</div>
-      <div style="background:rgba(255,255,255,.2);border-radius:99px;height:14px;max-width:400px;margin:0 auto 24px">
-        <div id="s2s-score-bar" style="background:#fff;border-radius:99px;height:100%;width:0%;transition:width 1s ease"></div>
-      </div>
-      <div style="font-size:.95rem;opacity:.75;margin-bottom:28px">${pct}% accuracy</div>
-      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:20px">
-        ${Array.from({length: TOTAL}, (_, idx) => {
-          const n = idx + 1;
-          const hit = selections[n] === answers[n];
-          return '<div title="Trial ' + n + ': you chose ' + selections[n] + ', correct was ' + answers[n] + '" style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;cursor:default;background:' + (hit ? 'rgba(255,255,255,.9)' : 'rgba(255,255,255,.2)') + ';color:' + (hit ? '#1a3a5c' : '#fff') + '">' + (hit ? '✓' : n) + '</div>';
-        }).join("")}
-      </div>
-      <div style="font-size:12px;opacity:.6;margin-bottom:28px">Hover a circle to see trial details</div>
+    // Show thank-you message
+    const thankYou = document.createElement("div");
+    thankYou.id = "s2s-thank-you";
+    thankYou.style.cssText = "background:linear-gradient(135deg,#1a3a5c,#2d6a9f);color:#fff;border-radius:20px;padding:40px 32px;text-align:center;margin-top:40px;box-shadow:0 8px 32px rgba(0,0,0,.2)";
+    thankYou.innerHTML = `
+      <div style="font-size:2rem;font-weight:800;margin-bottom:12px">Thank you!</div>
+      <div style="font-size:1.1rem;opacity:.85;margin-bottom:24px">Your responses have been submitted successfully.</div>
       <button id="s2s-redo-btn" style="background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.6);padding:12px 36px;font-size:16px;font-weight:700;border-radius:40px;cursor:pointer;transition:all .2s;letter-spacing:.5px">
         Try Again
       </button>
     `;
 
-    document.querySelector(".s2s-submit-wrap").after(scoreCard);
-    setTimeout(() => { document.getElementById("s2s-score-bar").style.width = pct + "%"; }, 100);
-    scoreCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    document.querySelector(".s2s-submit-wrap").after(thankYou);
+    thankYou.scrollIntoView({ behavior: "smooth", block: "center" });
 
     document.getElementById("s2sSubmitBtn").disabled = true;
     document.getElementById("s2sSubmitBtn").textContent = "Submitted ✓";
 
-    // Redo button
-    document.getElementById("s2s-redo-btn").addEventListener("mouseenter", function() {
-      this.style.background = "rgba(255,255,255,.3)";
-      this.style.transform = "translateY(-2px)";
-    });
-    document.getElementById("s2s-redo-btn").addEventListener("mouseleave", function() {
-      this.style.background = "rgba(255,255,255,.15)";
-      this.style.transform = "translateY(0)";
-    });
     document.getElementById("s2s-redo-btn").addEventListener("click", function() {
-      // Reset all selections
       for (let i = 1; i <= TOTAL; i++) selections[i] = null;
-
-      // Remove all selected states from options
       document.querySelectorAll(".s2s-audio-option.selected").forEach(el => el.classList.remove("selected"));
-
-      // Reset progress bar
       progressFill.style.width = "0%";
-
-      // Re-enable submit button
       const btn = document.getElementById("s2sSubmitBtn");
       btn.disabled = false;
       btn.textContent = "Submit Answers";
-
-      // Remove score card
-      scoreCard.remove();
-
-      // Scroll back to top
+      thankYou.remove();
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
-
-    fetch("https://dit-proxy-wang-junbos-projects.vercel.app/api/s2s", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(submissionData)
-    }).catch(() => console.table(submissionData));
   });
 
 })();

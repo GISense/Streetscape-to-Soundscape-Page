@@ -203,28 +203,33 @@
        // 通过 fetch 将数据提交到本地 8080 端口的后端接口
 
 
-    fetch("https://dit-proxy-wang-junbos-projects.vercel.app/api/q2", {
+    fetch("/api/q2", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(submissionData)
       })
-      //如果状态值为 200，表示成功
       .then(response => {
-        if (response.ok) {
-          alert("Submission successful! Data has been sent to our server.");
-        } else {
-          alert("Submission failed. Please try again later and contact us.");
-        }
+        if (!response.ok) throw new Error("Server error");
+        submitButton.disabled = true;
+        submitButton.textContent = "Submitted ✓";
+        const ty = document.createElement("div");
+        ty.style.cssText = "background:linear-gradient(135deg,#1a3a5c,#2d6a9f);color:#fff;border-radius:20px;padding:32px 24px;text-align:center;margin-top:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)";
+        ty.innerHTML = '<div style="font-size:1.6rem;font-weight:800;margin-bottom:8px">Thank you!</div><div style="font-size:1rem;opacity:.85">Your responses have been submitted successfully.</div>';
+        submitButton.parentElement.after(ty);
+        ty.scrollIntoView({ behavior: "smooth", block: "center" });
       })
+      .catch(() => {
+        alert("Submission failed. Please make sure you are accessing this page through the server (http://localhost:3000).");
+      });
 
     });
     const submitContainer = document.createElement("div");
-    submitContainer.style.textAlign = "center"; // 居中按钮
-    submitContainer.style.margin = "40px 0";    // 加点上下间距
+    submitContainer.style.textAlign = "center";
+    submitContainer.style.margin = "40px 0";
     submitContainer.appendChild(submitButton);
-    submitButton.style.width = "100%";      // 撑满父容器
+    submitButton.style.width = "100%";
     submitContainer.style.margin = "40px auto";
     submitButton.style.borderRadius = "12px";
     submitButton.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
@@ -372,29 +377,34 @@ document.querySelectorAll("#q2-pairs-container .q2-selectable-image").forEach(im
     }
     console.log("Submission Data:", submissionData);
 
-    fetch("https://dit-proxy-wang-junbos-projects.vercel.app/api/q1", {
+    fetch("/api/q1", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(submissionData)
       })
-      //如果状态值为 200，表示成功
       .then(response => {
-        if (response.ok) {
-          alert("Submission successful! Data has been sent to our server.");
-        } else {
-          alert("Submission failed. Please try again later and contact us.");
-        }
+        if (!response.ok) throw new Error("Server error");
+        submitButton.disabled = true;
+        submitButton.textContent = "Submitted ✓";
+        const ty = document.createElement("div");
+        ty.style.cssText = "background:linear-gradient(135deg,#1a3a5c,#2d6a9f);color:#fff;border-radius:20px;padding:32px 24px;text-align:center;margin-top:24px;box-shadow:0 8px 32px rgba(0,0,0,.2)";
+        ty.innerHTML = '<div style="font-size:1.6rem;font-weight:800;margin-bottom:8px">Thank you!</div><div style="font-size:1rem;opacity:.85">Your responses have been submitted successfully.</div>';
+        submitButton.parentElement.after(ty);
+        ty.scrollIntoView({ behavior: "smooth", block: "center" });
       })
+      .catch(() => {
+        alert("Submission failed. Please make sure you are accessing this page through the server (http://localhost:3000).");
+      });
 
     });
 
     const submitContainer = document.createElement("div");
-    submitContainer.style.textAlign = "center"; // 居中按钮
-    submitContainer.style.margin = "40px 0";    // 加点上下间距
+    submitContainer.style.textAlign = "center";
+    submitContainer.style.margin = "40px 0";
     submitContainer.appendChild(submitButton);
-    submitButton.style.width = "100%";      // 撑满父容器
+    submitButton.style.width = "100%";
     submitContainer.style.margin = "40px auto";
     submitButton.style.borderRadius = "12px";
     submitButton.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
