@@ -154,10 +154,10 @@ The `answer` field records which option letter (`"A"`, `"B"`, or `"C"`) is the g
 // The correct audio is in slot B, so set answer to "B"
 audios: {
   A: "static/user_study/Q2/audio/distractor1.wav",
-  B: "static/user_study/Q2/audio/correct_audio.wav",   // ← correct
+  B: "static/user_study/Q2/audio/correct_audio.wav",   // correct
   C: "static/user_study/Q2/audio/distractor2.wav"
 },
-answer: "B"    // ← must match the slot containing the correct audio
+answer: "B"    // must match the slot containing the correct audio
 ```
 
 > **Important:** The `answer` field does **not** affect what the participant sees or hears — it is purely a metadata label sent to the server for scoring purposes. Make sure it always matches the actual slot containing the correct audio.
